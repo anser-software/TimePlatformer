@@ -12,26 +12,20 @@ public class TimeState : MonoBehaviour
     [SerializeField]
     private float fastForwardFactor, timeChangeRate;
 
-    private float targetTimeScale;
+    private float targetTimeScale = 1F;
+
+    private bool playing = true;
 
     private void Awake()
     {
         instance = this;
     }
 
-    private void Start()
-    {
-        Play();
-    }
-
     public void Play() 
     {
-        targetTimeScale = 1F;
-    }
+        playing = !playing;
 
-    public void Pause()
-    {
-        targetTimeScale = 0F;
+        targetTimeScale = playing ? 1F : 0F;
     }
 
     public void Fast() 
