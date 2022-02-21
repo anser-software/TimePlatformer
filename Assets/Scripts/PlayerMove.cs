@@ -10,12 +10,19 @@ public class PlayerMove : MonoBehaviour
     public bool onMovingPlatform { get; private set; }
 
     [SerializeField]
-    private Vector3 movement;
+    private Vector3 movement, jumpForce;
 
     [SerializeField]
-    private float floorCheckDistance;
+    private float platformInFrontCheckDistance, groundCheckDistance, minJumpDistance;
+
+    [SerializeField]
+    private LayerMask ground;
 
     private Rigidbody rb;
+
+    private bool grounded = true;
+
+    private float jumpTimer;
 
     private void Awake()
     {
@@ -27,19 +34,48 @@ public class PlayerMove : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    private void Update()
+    {
+        if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundCheckDistance, ground.value))
+        {
+            grounded = true;
+
+            transform.parent = hit.collider.transform;
+
+            onMovingPlatform = hit.collider.transform.GetComponent<Platform>() != null;
+        } else
+        {
+            grounded = false;
+        }
+
+        if (jumpTimer > 0F)
+            jumpTimer -= Time.deltaTime;
+    }
+
     private void FixedUpdate()
     {
-        if (Physics.Raycast(transform.position + movement.normalized, Vector3.down, floorCheckDistance))
+        var rayOrigin = transform.position + movement.normalized;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, platformInFrontCheckDistance))
         {
             rb.AddForce(movement, ForceMode.Force);
+
+            if ((hit.point - rayOrigin).sqrMagnitude < minJumpDistance * minJumpDistance)
+            {
+                Jump();
+            }
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void Jump()
     {
-        transform.parent = collision.collider.transform;
+        if (!grounded || jumpTimer > 0F)
+            return;
 
-        onMovingPlatform = collision.collider.transform.GetComponent<Platform>() != null;     
+        jumpTimer = 0.4F;
+
+        rb.AddForce(jumpForce, ForceMode.Impulse);
     }
+
 
 }

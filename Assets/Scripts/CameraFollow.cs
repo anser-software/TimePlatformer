@@ -22,21 +22,8 @@ public class CameraFollow : MonoBehaviour
         offset = transform.position - target.position;
     }
 
-    private void FixedUpdate()
-    {
-        if (PlayerMove.instance.onMovingPlatform)
-            return;
-
-        var targetPos = target.position + offset;
-
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * speed);
-    }
-
     private void Update()
     {
-        if (!PlayerMove.instance.onMovingPlatform)
-            return;
-
         var targetPos = target.position + offset;
 
         transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * speed);
