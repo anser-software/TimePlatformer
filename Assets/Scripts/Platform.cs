@@ -12,6 +12,9 @@ public class Platform : MonoBehaviour
     private AnimationCurve curve;
 
     [SerializeField]
+    private bool loop;
+
+    [SerializeField]
     private float speed, correctPosThreshold;
 
     [SerializeField]
@@ -40,19 +43,36 @@ public class Platform : MonoBehaviour
 
     private void Update()
     {
+        Move();
+
+        SetMaterial();
+    }
+
+    private void Move()
+    {
         currentTime += Time.deltaTime * speed * TimeState.instance.globalTimeScale;
 
-        pathProgress = curve.Evaluate(1F - 2F * Mathf.Abs(currentTime - (float)System.Math.Truncate(currentTime) - 0.5F));
+        if (loop)
+        {
+            pathProgress = curve.Evaluate(currentTime - Mathf.Floor(currentTime));
+        }
+        else
+        {
+            pathProgress = curve.Evaluate(1F - 2F * Mathf.Abs(currentTime - Mathf.Floor(currentTime) - 0.5F));
+        }
 
         transform.position = pathCreator.path.GetPointAtTime(pathProgress, EndOfPathInstruction.Stop);
+    }
 
-        if((transform.position - correctPosition).sqrMagnitude < correctPosThreshold * correctPosThreshold)
+    private void SetMaterial()
+    {
+        if ((transform.position - correctPosition).sqrMagnitude < correctPosThreshold * correctPosThreshold)
         {
             meshRenderer.sharedMaterial = correctMat;
-        } else
+        }
+        else
         {
             meshRenderer.sharedMaterial = defaultMat;
         }
     }
-
 }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMove : MonoBehaviour
 {
@@ -13,16 +13,19 @@ public class PlayerMove : MonoBehaviour
     private Vector3 movement, jumpForce;
 
     [SerializeField]
-    private float platformInFrontCheckDistance, groundCheckDistance, minJumpDistance;
+    private float platformInFrontCheckDistanceDown, platformInFrontCheckDistanceForward, groundCheckDistance, minJumpDistance, jumpForceDelay;
 
     [SerializeField]
     private LayerMask ground;
+
+    [SerializeField]
+    private Animator animator;
 
     private Rigidbody rb;
 
     private bool grounded = true;
 
-    private float jumpTimer;
+    private float jumpTimer, fallTimer;
 
     private void Awake()
     {
@@ -40,27 +43,47 @@ public class PlayerMove : MonoBehaviour
         {
             grounded = true;
 
-            transform.parent = hit.collider.transform;
+            //transform.parent = hit.collider.transform;
 
             onMovingPlatform = hit.collider.transform.GetComponent<Platform>() != null;
-        } else
+
+            animator.SetTrigger("Run");
+        }
+        else
         {
             grounded = false;
+
+
+            if(jumpTimer <= 0F && fallTimer <= 0F)
+            {
+                Debug.Log("Not grounded; Fall");
+
+                animator.SetTrigger("Fall");
+                fallTimer = 0.8F;
+            }
         }
 
         if (jumpTimer > 0F)
             jumpTimer -= Time.deltaTime;
+
+        if (fallTimer > 0F)
+            fallTimer -= Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
-        var rayOrigin = transform.position + movement.normalized;
+        var nextPlatformRayOrigin = transform.position + movement.normalized;
 
-        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, platformInFrontCheckDistance))
+        if (Physics.Raycast(nextPlatformRayOrigin, Vector3.down, platformInFrontCheckDistanceDown))
         {
             rb.AddForce(movement, ForceMode.Force);
+        }
 
-            if ((hit.point - rayOrigin).sqrMagnitude < minJumpDistance * minJumpDistance)
+        var jumpRayOrigin = transform.position + movement.normalized * platformInFrontCheckDistanceForward;
+
+        if (Physics.Raycast(jumpRayOrigin, Vector3.down, out RaycastHit hit, platformInFrontCheckDistanceDown))
+        {
+            if ((hit.point - jumpRayOrigin).sqrMagnitude < minJumpDistance * minJumpDistance)
             {
                 Jump();
             }
@@ -72,9 +95,11 @@ public class PlayerMove : MonoBehaviour
         if (!grounded || jumpTimer > 0F)
             return;
 
-        jumpTimer = 0.4F;
+        jumpTimer = 0.6F;
 
-        rb.AddForce(jumpForce, ForceMode.Impulse);
+        DOTween.Sequence().SetDelay(jumpForceDelay).OnComplete(() => rb.AddForce(jumpForce, ForceMode.Impulse));
+
+        animator.SetTrigger("Jump");
     }
 
 
