@@ -41,9 +41,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4100742458119655652}
-  - component: {fileID: 4100742458119655651}
   - component: {fileID: 4100742458119655648}
   - component: {fileID: 4100742458119655655}
+  - component: {fileID: 4127428645615187333}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -66,20 +66,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &4100742458119655651
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4100742458119655649}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.3
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4100742458119655648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,13 +78,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24a3f3a854ac04e4e81d700b90d7a6db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {x: 12, y: 0, z: 0}
   jumpForce: {x: 1, y: 5, z: 0}
+  speed: 4
   platformInFrontCheckDistanceDown: 10
   platformInFrontCheckDistanceForward: 2
-  groundCheckDistance: 2
+  groundCheckDistance: 1.06
   minJumpDistance: 0.8
   jumpForceDelay: 0.3
+  enableFallAnimAirborneTime: 2
+  jumpDecceleration: 1.5
+  gravityStrength: 1
   ground:
     serializedVersion: 2
     m_Bits: 55
@@ -119,6 +108,20 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!136 &4127428645615187333
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4100742458119655649}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.3
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &3232912152727105597
 Animator:
   serializedVersion: 3
