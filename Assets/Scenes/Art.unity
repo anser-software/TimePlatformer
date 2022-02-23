@@ -194,7 +194,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  loop: 0
   speed: 0.4
+  correctPosThreshold: 0
+  correctMat: {fileID: 0}
+  meshRenderer: {fileID: 0}
   offset: 0
 --- !u!65 &106976458
 BoxCollider:
@@ -391,7 +395,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  loop: 0
   speed: 0.2
+  correctPosThreshold: 0
+  correctMat: {fileID: 0}
+  meshRenderer: {fileID: 0}
   offset: 0
 --- !u!1 &181453162
 GameObject:
@@ -2149,7 +2157,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  loop: 0
   speed: 0.6
+  correctPosThreshold: 0
+  correctMat: {fileID: 0}
+  meshRenderer: {fileID: 0}
   offset: 0
 --- !u!65 &1122182810
 BoxCollider:
@@ -2891,7 +2903,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  loop: 0
   speed: 0.2
+  correctPosThreshold: 0
+  correctMat: {fileID: 0}
+  meshRenderer: {fileID: 0}
   offset: 0
 --- !u!65 &1418920752
 BoxCollider:
@@ -3063,7 +3079,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  loop: 0
   speed: 0.6
+  correctPosThreshold: 0
+  correctMat: {fileID: 0}
+  meshRenderer: {fileID: 0}
   offset: 0
 --- !u!65 &1569294376
 BoxCollider:
@@ -3704,7 +3724,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {x: 12, y: 0, z: 0}
-  floorCheckDistance: 1.4
+  jumpForce: {x: 0, y: 0, z: 0}
+  platformInFrontCheckDistanceDown: 0
+  platformInFrontCheckDistanceForward: 0
+  groundCheckDistance: 0
+  minJumpDistance: 0
+  jumpForceDelay: 0
+  ground:
+    serializedVersion: 2
+    m_Bits: 0
+  animator: {fileID: 0}
 --- !u!136 &1955922546
 CapsuleCollider:
   m_ObjectHideFlags: 0
