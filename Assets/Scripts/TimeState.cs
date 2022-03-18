@@ -29,7 +29,7 @@ public class TimeState : MonoBehaviour
 
         targetTimeScale = playing ? 1F : 0F;
 
-        if(playing == false)
+        if (!playing)
         {
             OnPause?.Invoke();
         }

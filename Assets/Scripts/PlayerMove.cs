@@ -25,6 +25,9 @@ public class PlayerMove : MonoBehaviour
     [SerializeField]
     private Animator animator;
 
+    [SerializeField]
+    private int maxPositionSamples;
+
     private Rigidbody rb;
 
     private bool grounded = true;
@@ -34,6 +37,8 @@ public class PlayerMove : MonoBehaviour
     private Vector3 currentJumpForce = Vector3.zero;
 
     private float currentGravity;
+
+    private List<Vector3> playerPositions = new List<Vector3>();
 
     private void Awake()
     {
@@ -47,6 +52,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+
         if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundCheckDistance, ground.value))
         {
             grounded = true;
@@ -82,30 +88,50 @@ public class PlayerMove : MonoBehaviour
 
         if (fallTimer > 0F)
             fallTimer -= Time.deltaTime;
+
+        if (!grounded && TimeState.instance.globalTimeScale < 0 && playerPositions.Count > 0)
+        {
+            transform.position = Vector3.Lerp(transform.position, playerPositions[playerPositions.Count - 1], Time.deltaTime * 10F);
+        }
     }
 
     private void FixedUpdate()
     {
-        var nextPlatformRayOrigin = transform.position + Vector3.right;
 
-        if (Physics.Raycast(nextPlatformRayOrigin, Vector3.down, platformInFrontCheckDistanceDown, ground.value))
+        if (!grounded && TimeState.instance.globalTimeScale < 0 && playerPositions.Count > 0) 
         {
-            //rb.AddForce(Vector3.right, ForceMode.Force);
-            rb.velocity = Vector3.right * speed + Vector3.down * currentGravity + currentJumpForce;
+            playerPositions.RemoveAt(playerPositions.Count - 1);
         }
-
-        var jumpRayOrigin = transform.position + Vector3.right * platformInFrontCheckDistanceForward;
-
-        if (Physics.Raycast(jumpRayOrigin, Vector3.down, out RaycastHit hit, platformInFrontCheckDistanceDown))
+        else
         {
-            if ((hit.point - jumpRayOrigin).sqrMagnitude < minJumpDistance * minJumpDistance)
+            playerPositions.Add(transform.position);
+
+            if (playerPositions.Count > maxPositionSamples)
             {
-                Jump();
+                playerPositions.RemoveAt(0);
             }
-        }
 
-        currentJumpForce = Vector3.Lerp(currentJumpForce, Vector3.zero, Time.deltaTime * jumpDecceleration);
-        //rb.velocity = rb.velocity.normalized * speed;
+            var nextPlatformRayOrigin = transform.position + Vector3.right;
+
+            if (Physics.Raycast(nextPlatformRayOrigin, Vector3.down, platformInFrontCheckDistanceDown, ground.value))
+            {
+                //rb.AddForce(Vector3.right, ForceMode.Force);
+                rb.velocity = Vector3.right * speed + Vector3.down * currentGravity + currentJumpForce;
+            }
+
+            var jumpRayOrigin = transform.position + Vector3.right * platformInFrontCheckDistanceForward;
+
+            if (Physics.Raycast(jumpRayOrigin, Vector3.down, out RaycastHit hit, platformInFrontCheckDistanceDown))
+            {
+                if ((hit.point - jumpRayOrigin).sqrMagnitude < minJumpDistance * minJumpDistance)
+                {
+                    Jump();
+                }
+            }
+
+            currentJumpForce = Vector3.Lerp(currentJumpForce, Vector3.zero, Time.deltaTime * jumpDecceleration);
+            //rb.velocity = rb.velocity.normalized * speed;
+        }
     }
 
     private void Jump()

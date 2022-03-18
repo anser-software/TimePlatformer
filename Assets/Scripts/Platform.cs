@@ -6,7 +6,7 @@ public class Platform : MonoBehaviour
 {
 
     [SerializeField]
-    private PathCreator pathCreator;
+    protected PathCreator pathCreator;
 
     [SerializeField]
     protected AnimationCurve curve;
@@ -48,11 +48,6 @@ public class Platform : MonoBehaviour
         SetMaterial();
     }
 
-    public virtual void CheckCorrectPos()
-    {
-        GameManager.instance.AddScore((transform.position - correctPosition).magnitude);
-    }
-
     private void Move()
     {
         currentTime += Time.deltaTime * speed * TimeState.instance.globalTimeScale;
@@ -67,6 +62,12 @@ public class Platform : MonoBehaviour
         }
 
         transform.position = pathCreator.path.GetPointAtTime(pathProgress, EndOfPathInstruction.Stop);
+    }
+
+    public virtual void CheckCorrectPos()
+    {
+        Debug.Log("CHECK CORRECT POS");
+        GameManager.instance.AddScore((transform.position - correctPosition).magnitude);
     }
 
     private void SetMaterial()

@@ -7,7 +7,7 @@ public class ActionTrigger : MonoBehaviour
 {
 
     [SerializeField]
-    private UnityAction OnEnter;
+    private UnityEvent OnEnter;
 
     private bool activated;
 
