@@ -7,6 +7,8 @@ public class FinishController : MonoBehaviour
     
     public static FinishController instance { get; private set; }
 
+    public int currentMultiplier { get { return currentPlatformCount > 0 ? multiplierPerPlatform[currentPlatformCount - 1] : 0; } }
+
     public Action OnBeginFinish;
 
     [SerializeField]
@@ -22,7 +24,7 @@ public class FinishController : MonoBehaviour
     private float targetZ, zRange, correctThreshold, platformMoveSpeed, xStepPerPlatform;
 
     [SerializeField]
-    private int platformCount;
+    private int[] multiplierPerPlatform;
 
     [SerializeField]
     private AnimationCurve platformMovementCurve;
@@ -79,12 +81,14 @@ public class FinishController : MonoBehaviour
             if (CheckCorrectness() == false)
                 return;
 
-            if(currentPlatformCount < platformCount)
+            if(currentPlatformCount < multiplierPerPlatform.Length)
             {
                 NewPlatform();
             } else
             {
                 currentPlatform = null;
+
+                GameManager.instance.Win();
             }
         }
     }
@@ -114,7 +118,8 @@ public class FinishController : MonoBehaviour
         } else
         {
             active = false;
-            Debug.Log("WRONG");
+            GameManager.instance.Win();
+
             return false;
         }
     }

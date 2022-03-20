@@ -13,7 +13,7 @@ public class ActionTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (activated)
+        if (activated || !other.CompareTag("Player"))
             return;
 
         activated = true;

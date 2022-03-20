@@ -125,7 +125,7 @@ MonoBehaviour:
   speed: 0.5
   correctPosThreshold: 0.4
   correctMat: {fileID: 2100000, guid: d3046022c3ddd784b96216c6ea968954, type: 2}
-  meshRenderer: {fileID: 3589929632612437603, guid: 3c35572d59116e64488d5afac4831137, type: 3}
+  meshRenderer: {fileID: 4478665428085586498}
   offset: 0
 --- !u!65 &1399454333966510497
 BoxCollider:

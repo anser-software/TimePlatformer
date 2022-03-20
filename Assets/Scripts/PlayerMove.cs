@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
     private Vector3 jumpForce;
 
     [SerializeField]
-    private float speed;
+    private float speed, minRunVelocity;
 
     [SerializeField]
     private float platformInFrontCheckDistanceDown, platformInFrontCheckDistanceForward, 
@@ -52,16 +52,23 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
+        animator.SetFloat("Speed", rb.velocity.magnitude);
 
         if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, groundCheckDistance, ground.value))
         {
             grounded = true;
 
-            //transform.parent = hit.collider.transform;
-
             onMovingPlatform = hit.collider.transform.GetComponent<Platform>() != null;
 
-            animator.SetTrigger("Run");
+            /*
+            if ( < minRunVelocity * minRunVelocity)
+            {
+                animator.SetTrigger("Idle");
+            }
+            else
+            {
+                animator.SetTrigger("Run");
+            }*/
 
             airborneTimer = 0F;
         }
@@ -82,6 +89,7 @@ public class PlayerMove : MonoBehaviour
             }
 
         }
+
 
         if (jumpTimer > 0F)
             jumpTimer -= Time.deltaTime;
@@ -111,12 +119,15 @@ public class PlayerMove : MonoBehaviour
                 playerPositions.RemoveAt(0);
             }
 
-            var nextPlatformRayOrigin = transform.position + Vector3.right;
+            var nextPlatformRayOrigin = transform.position + Vector3.right * 2F;
 
             if (Physics.Raycast(nextPlatformRayOrigin, Vector3.down, platformInFrontCheckDistanceDown, ground.value))
             {
                 //rb.AddForce(Vector3.right, ForceMode.Force);
                 rb.velocity = Vector3.right * speed + Vector3.down * currentGravity + currentJumpForce;
+            } else
+            {
+                rb.velocity = Vector3.Lerp(rb.velocity, Vector3.down * currentGravity + currentJumpForce, Time.deltaTime * 5F);
             }
 
             var jumpRayOrigin = transform.position + Vector3.right * platformInFrontCheckDistanceForward;
@@ -139,7 +150,7 @@ public class PlayerMove : MonoBehaviour
         if (!grounded || jumpTimer > 0F)
             return;
 
-        jumpTimer = 0.6F;
+        jumpTimer = 1F;
 
         DOTween.Sequence().SetDelay(jumpForceDelay).OnComplete(() => currentJumpForce = jumpForce);//rb.AddForce(jumpForce, ForceMode.Impulse));
 
