@@ -86,7 +86,11 @@ public class FinishController : MonoBehaviour
                 NewPlatform();
             } else
             {
-                currentPlatform = null;
+                if (currentPlatform != null)
+                {
+                    currentPlatform.layer = LayerMask.NameToLayer("Default");
+                    currentPlatform = null;
+                }
 
                 GameManager.instance.Win();
             }

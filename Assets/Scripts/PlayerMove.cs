@@ -17,7 +17,7 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField]
     private float platformInFrontCheckDistanceDown, platformInFrontCheckDistanceForward, 
-        groundCheckDistance, minJumpDistance, jumpForceDelay, enableFallAnimAirborneTime, jumpDecceleration, gravityStrength;
+        groundCheckDistance, nextPlatformCheckDistFwd, minJumpDistance, jumpForceDelay, enableFallAnimAirborneTime, jumpDecceleration, gravityStrength;
 
     [SerializeField]
     private LayerMask ground;
@@ -32,7 +32,7 @@ public class PlayerMove : MonoBehaviour
 
     private bool grounded = true;
 
-    private float jumpTimer, fallTimer, airborneTimer;
+    private float jumpTimer;
 
     private Vector3 currentJumpForce = Vector3.zero;
 
@@ -48,6 +48,11 @@ public class PlayerMove : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        FinishController.instance.OnBeginFinish += () =>
+        {
+            nextPlatformCheckDistFwd = 1F;
+        };
     }
 
     private void Update()
@@ -59,43 +64,17 @@ public class PlayerMove : MonoBehaviour
             grounded = true;
 
             onMovingPlatform = hit.collider.transform.GetComponent<Platform>() != null;
-
-            /*
-            if ( < minRunVelocity * minRunVelocity)
-            {
-                animator.SetTrigger("Idle");
-            }
-            else
-            {
-                animator.SetTrigger("Run");
-            }*/
-
-            airborneTimer = 0F;
         }
         else
         {
             grounded = false;
 
-            airborneTimer += Time.deltaTime;
-
             currentGravity += Time.deltaTime * 9.81F * gravityStrength;
-
-            if (jumpTimer <= 0F && fallTimer <= 0F && airborneTimer > enableFallAnimAirborneTime)
-            {
-                Debug.Log("Not grounded; Fall");
-
-                animator.SetTrigger("Fall");
-                fallTimer = 0.8F;
-            }
-
         }
 
 
         if (jumpTimer > 0F)
             jumpTimer -= Time.deltaTime;
-
-        if (fallTimer > 0F)
-            fallTimer -= Time.deltaTime;
 
         if (!grounded && TimeState.instance.globalTimeScale < 0 && playerPositions.Count > 0)
         {
@@ -119,7 +98,7 @@ public class PlayerMove : MonoBehaviour
                 playerPositions.RemoveAt(0);
             }
 
-            var nextPlatformRayOrigin = transform.position + Vector3.right * 2F;
+            var nextPlatformRayOrigin = transform.position + Vector3.right * nextPlatformCheckDistFwd;
 
             if (Physics.Raycast(nextPlatformRayOrigin, Vector3.down, platformInFrontCheckDistanceDown, ground.value))
             {

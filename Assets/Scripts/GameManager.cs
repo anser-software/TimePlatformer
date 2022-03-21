@@ -66,9 +66,10 @@ public class GameManager : MonoBehaviour
 
     public void AddScore(float distance)
     {
-        score += Mathf.RoundToInt(Mathf.Lerp(5, 1, Mathf.InverseLerp(0F, minCorrectPathDist, distance)));
+        var addition = Mathf.RoundToInt(Mathf.Lerp(5, 1, Mathf.InverseLerp(0F, minCorrectPathDist, distance)));
+        score += addition;
 
-        Debug.Log(string.Format("Score = {0}", score));
+        Debug.Log(string.Format("+{0} score", addition));
     }
 
     public void Win()

@@ -84,13 +84,12 @@ MonoBehaviour:
   platformInFrontCheckDistanceDown: 10
   platformInFrontCheckDistanceForward: 2.5
   groundCheckDistance: 1.2
+  nextPlatformCheckDistFwd: 2
   minJumpDistance: 0.7
   jumpForceDelay: 0.15
   enableFallAnimAirborneTime: 2
   jumpDecceleration: 1.5
   gravityStrength: 2
-  timeNotMovingForIdle: 0.2
-  timeMovingForRun: 0.2
   ground:
     serializedVersion: 2
     m_Bits: 55
